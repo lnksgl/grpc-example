@@ -1,0 +1,44 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.5.2'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id "com.google.protobuf" version "0.8.19"
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    protobuf_version = '3.21.2'
+    grpc_version = '1.47.0'
+    grpc_server_version = '2.13.1.RELEASE'
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    implementation "io.grpc:grpc-netty:${grpc_version}"
+    implementation("net.devh:grpc-server-spring-boot-starter:${grpc_server_version}") {
+        exclude group: 'io.grpc', module: 'grpc-netty-shaded'
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:${protobuf_version}"
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpc_version}"
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+}
